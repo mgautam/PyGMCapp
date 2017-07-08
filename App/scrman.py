@@ -10,7 +10,7 @@ from kivy.lang import Builder
 Builder.load_file("scrman.kv")
 
 class ScreenMan(ScreenManager):
-    pass
+    hostIP=None
 
 class ScrManBuilder():
     screenmanager = None
@@ -35,6 +35,7 @@ class ScrManBuilder():
     def buildScrMan(self):
         self.screenmanager = ScreenMan()
         self.screenmanager.get_screen("findhostswindow").add_widget(self.buildHostsFinder())
+        #self.screenmanager.get_screen("findctrlswindow").on_enter()
         self.screenmanager.get_screen("findctrlswindow").add_widget(self.buildCtrlsFinder())
         return self.screenmanager
 

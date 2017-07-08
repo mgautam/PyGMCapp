@@ -1,11 +1,24 @@
-<ctrlsWindow@BoxLayout>:
+<ctrlBtn@Button>:
+    size_hint:None,None
+    size:300,30
+<ctrlsWindow@FloatLayout>:
     button:ping_btn
     ctrlsContainer: ping_bl
-    orientation: "vertical"
+    iplbl:host_lbl
+    Label:
+        id: host_lbl
+        size_hint:None,None
+        size:300,30
+        pos:0,root.height-self.height
     Button:
         id: ping_btn
+        size_hint:None,None
+        size:300,30
+        pos:root.width/2-self.width/2,root.height-self.height-15
         text:"Find Controllers"
-
-    BoxLayout:
+    StackLayout:
+        size_hint:None,None
+        size:root.width,root.height-60
+        orientation: "tb-lr"
         id: ping_bl
-        spacing: 10
+        spacing: 15

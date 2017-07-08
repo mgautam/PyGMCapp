@@ -1,14 +1,19 @@
 from kivy.uix.button import Button
-from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.floatlayout import FloatLayout
+
 from kivy.lang import Builder
 Builder.load_file("hostswindow.kv")
-class hostsWindow(BoxLayout):
+class hostBtn(Button):
+    pass
+
+class hostsWindow(FloatLayout):
     pass
 
 from twisted.internet.protocol import DatagramProtocol
 class hostsFinder(DatagramProtocol):
     hostswindow=None
     scrman=None
+    selectedHost=None
 
     def __init__(self, _window, _scrman):
          self.scrman = _scrman
@@ -18,16 +23,21 @@ class hostsFinder(DatagramProtocol):
          self.transport.setBroadcastAllowed(True)
 
     def sendPing(self, *args):
-         pingMsg = "PING:"
+         pingMsg = self.hostswindow.passwdInput.text
          self.transport.write(pingMsg,('255.255.255.255',9999))
          self.hostswindow.hostsContainer.clear_widgets()
 
     def datagramReceived(self, data, (host, port)):
-         btn=Button(text=host)
+         btn=hostBtn(text=host)
+         btn.bind(on_touch_down=self.setHostIP)
          btn.bind(on_press=self.nextscreen)
          if data[:4] == "PONG":
              self.hostswindow.hostsContainer.add_widget(btn)
 
+    def setHostIP(self, btn, touch):
+        self.selectedHost=btn.text
+
     def nextscreen(self, args):
         self.transport.loseConnection()
+        self.scrman.hostIP=self.selectedHost
         self.scrman.current="findctrlswindow"

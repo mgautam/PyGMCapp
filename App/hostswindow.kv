@@ -1,11 +1,25 @@
-<hostsWindow@BoxLayout>:
+<hostBtn@Button>:
+    size_hint:None,None
+    size:300,30
+<hostsWindow@FloatLayout>:
     button:ping_btn
+    passwdInput:_passwdInput
     hostsContainer: ping_bl
-    orientation: "vertical"
+
     Button:
         id: ping_btn
+        size_hint:None,None
+        size:300,30
+        pos:root.width/2-self.width-15,root.height-self.height-15
         text:"Find Hosts"
-
-    BoxLayout:
+    TextInput:
+        id:_passwdInput
+        size_hint:None,None
+        size:300,30
+        pos:root.width/2+15,root.height-self.height-15
+    StackLayout:
+        size_hint:None,None
+        size:root.width,root.height-60
+        orientation: "tb-lr"
         id: ping_bl
-        spacing: 10
+        spacing: 15
