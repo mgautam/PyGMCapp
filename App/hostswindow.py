@@ -39,5 +39,5 @@ class hostsFinder(DatagramProtocol):
 
     def nextscreen(self, args):
         self.transport.loseConnection()
-        self.scrman.hostIP=self.selectedHost
+        self.scrman.selectedHostIP=self.selectedHost
         self.scrman.current="findctrlswindow"

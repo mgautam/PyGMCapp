@@ -4,18 +4,20 @@ from kivy.uix.screenmanager import ScreenManager
 
 from twisted.internet import reactor
 from hostswindow import hostsFinder, hostsWindow
-from ctrlswindow import ctrlsFinder, ctrlsWindow
+from ctrlswindow import ctrlsWindow, tcpHighwayFactory, tcpDataProcessor
 
 from kivy.lang import Builder
 Builder.load_file("scrman.kv")
 
 class ScreenMan(ScreenManager):
-    hostIP=None
+    selectedHostIP=None
+    selectedCtrlID=None
 
 class ScrManBuilder():
     screenmanager = None
     logicInstance = None
     uiInstance = None
+    tcpDataProcessor = None
 
     def buildHostsFinder(self):
         self.uiInstance = hostsWindow()
@@ -26,9 +28,9 @@ class ScrManBuilder():
 
     def buildCtrlsFinder(self):
         self.uiInstance = ctrlsWindow()
-        self.logicInstance = ctrlsFinder(self.uiInstance, self.screenmanager)
-        self.uiInstance.button.bind(on_press=self.logicInstance.sendPing)
-        reactor.listenUDP(0,self.logicInstance)
+        self.logicInstance = tcpHighwayFactory(self.uiInstance, self.screenmanager)
+        self.tcpDataProcessor=tcpDataProcessor(self.logicInstance)
+        self.uiInstance.button.bind(on_press=self.tcpDataProcessor.startReactor)
         return self.uiInstance
 
 

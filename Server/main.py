@@ -9,5 +9,24 @@ class PongProtocol(DatagramProtocol):
         else:
             print "received %r from %s:%d" % (datagram, host, port)
 
+
+from twisted.internet.protocol import ServerFactory, Protocol
+
+class EchoServerProtocol(Protocol):
+    def dataReceived(self, data):
+        print('Data received {}'.format(data))
+        self.transport.write(data)
+
+    def connectionMade(self):
+        print('Client connection from {}'.format(self.transport.getPeer()))
+
+    def connectionLost(self, reason):
+        print('Lost connection because {}'.format(reason))
+
+class EchoServerFactory(ServerFactory):
+    def buildProtocol(self, addr):
+        return EchoServerProtocol()
+
 reactor.listenUDP(9999,PongProtocol())
+reactor.listenTCP(9999, EchoServerFactory())
 reactor.run()
