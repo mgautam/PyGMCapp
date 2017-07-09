@@ -53,4 +53,5 @@ class UIManager():
     def selectcontrolwindow(self):
         self.controlwindow.hostlbl.text="Server: "+self.dataman.selectedServerIP
         self.controlwindow.ctrllbl.text="Controller: "+self.dataman.selectedCtrlID
+        self.controlwindow.statuslbl.text=self.serverwindow.statuslbl.text; #copy last status message to control window
         self.screenmanager.current="controlwindow"

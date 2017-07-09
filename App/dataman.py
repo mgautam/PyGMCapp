@@ -40,7 +40,11 @@ class DataManager():
         self.datatrans.findctrls()
 
     def updateStatus(self, msg):
-        self.uiman.serverwindow.statuslbl.text=msg
+        if self.uiman.screenmanager.current=="serverwindow":
+            self.uiman.serverwindow.statuslbl.text="Status: "+msg
+        else:
+        #if self.uiman.screenmanager.current=="controlwindow":
+            self.uiman.controlwindow.statuslbl.text="Status: "+msg
 
     def addController(self, ctrlr):
         self.uiman.serverwindow.addCntrllrBtn(ctrlr)
