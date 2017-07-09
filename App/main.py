@@ -4,13 +4,17 @@ from kivy.config import Config
 from kivy.support import install_twisted_reactor
 install_twisted_reactor()
 
-from scrman import ScrManBuilder
+from dataman import DataManager
+from uiman import UIManager
 
 class PyPSIApp(App):
-    screensBuilder=None
+    datamanager=None
+    uimanager=None
     def build(self):
-        self.screensBuilder=ScrManBuilder()
-        return self.screensBuilder.buildScrMan()
+        self.datamanager=DataManager(self.uimanager)
+        self.uimanager=UIManager(self.datamanager)
+        self.datamanager.uiman=self.uimanager
+        return self.uimanager.buildwindows()
 
 if __name__ == '__main__':
     Config.set('graphics', 'width',  960)

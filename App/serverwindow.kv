@@ -1,0 +1,30 @@
+<findBtn@Button>:
+    size_hint:None,None
+    size:300,30
+<serverWindow@FloatLayout>:
+    findbtn:ping_btn
+    hostlbl:host_lbl
+    statuslbl:status_lbl
+    ctrlsContainer: ping_bl
+    Button:
+        id: ping_btn
+        size_hint:None,None
+        size:300,30
+        pos:root.width/2-self.width-15,root.height-self.height-15 
+        text:"Find Controllers"
+    Label:
+        id: host_lbl
+        size_hint:None,None
+        size:300,30
+        pos:root.width/2+15,root.height-self.height-15 
+    Label:
+        id: status_lbl
+        size_hint:None,None
+        size:root.width,30
+        pos:0,root.height-self.height-60
+    StackLayout:
+        size_hint:None,None
+        size:root.width,root.height-100
+        orientation: "tb-lr"
+        id: ping_bl
+        spacing: 15
