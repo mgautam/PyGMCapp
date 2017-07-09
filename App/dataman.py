@@ -1,4 +1,5 @@
 #Android app for controlling PSI Goniometers
+import json
 from twisted.internet import reactor
 from networks import RadarScanner, dataHighwayFactory
 
@@ -11,12 +12,14 @@ class DataManager():
     uiman=None
 
     firstUDPCall=True
+    datatrans=None
 
     def __init__(self, _uiman):
         self.uiman=_uiman
         self.radarbeacon=RadarScanner(self)
         self.datahighway=dataHighwayFactory(self)
         #self.firstUDPCall=True
+        self.datatrans=dataTransformer(self.datahighway,self)
 
     def findhosts(self, *args):
         if(self.firstUDPCall):
@@ -34,7 +37,7 @@ class DataManager():
         reactor.connectTCP(self.selectedServerIP,9999,self.datahighway)
 
     def findctrls(self, *args):
-        self.datahighway.protocol.sendData("hello")
+        self.datatrans.findctrls()
 
     def updateStatus(self, msg):
         self.uiman.serverwindow.statuslbl.text=msg
@@ -44,3 +47,24 @@ class DataManager():
 
     def selectController(self, _ctrlid):
         self.selectedCtrlID=_ctrlid
+
+
+class dataTransformer():
+    datahighway=None
+    dataman=None
+
+    def __init__(self, _datahighway,_dataman):
+        self.datahighway=_datahighway
+        self.dataman=_dataman
+
+    def findctrls(self):
+        cmd=json.dumps({'cmd':'list_controllers'})
+        self.datahighway.protocol.sendData(cmd)
+
+    def decode(self, msg):
+        response=json.loads(msg)
+        #self.dataman.updateStatus(response['cmd'])
+        if response['cmd']=='controllers_list':
+            for ctrl in response['ids']:
+                self.dataman.addController(ctrl)
+

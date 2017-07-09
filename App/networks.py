@@ -26,17 +26,15 @@ class dataHighway(Protocol):
     def connectionMade(self):
         self.factory.logmsg('Connection Successful.')
 
-    def sendData(self,msg):
-        data = 'ABCDEF'
+    def sendData(self, msg):
         if (self.transport):
-            self.transport.write(data.encode())
-            self.factory.logmsg('Data sent {}'.format(data))
+            self.transport.write(msg)
+            self.factory.logmsg('Data sent {}'.format(msg))
         else:
             self.factory.logmsg('No Connection Established yet!')
 
     def dataReceived(self, data):
-        if data[:1]=='A':
-            self.factory.dataman.addController(data)
+        self.factory.dataman.datatrans.decode(data)
 
     def connectionLost(self, reason):
         self.factory.logmsg('Lost connection because {}'.format(reason))
