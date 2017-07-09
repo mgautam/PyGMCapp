@@ -8,12 +8,16 @@
         id: host_lbl
         size_hint:None,None
         size:150,30
-        pos:root.width/2-self.width-15,root.height-self.height-15 
+        pos:root.width/2-self.width-15,root.height-self.height-15
+        text_size:self.size
+        halign: 'right'
     Label:
         id: ctrl_lbl
         size_hint:None,None
         size:150,30
-        pos:root.width/2+15,root.height-self.height-15 
+        pos:root.width/2+15,root.height-self.height-15
+        text_size:self.size
+        halign: 'left'
     RelativeLayout:
         id: ctrl_area
         size_hint:None,None

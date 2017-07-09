@@ -47,10 +47,10 @@ class UIManager():
         return self.screenmanager
 
     def selectserverwindow(self):
-        self.serverwindow.hostlbl.text=self.dataman.selectedServerIP
+        self.serverwindow.hostlbl.text= "Server: "+self.dataman.selectedServerIP
         self.screenmanager.current="serverwindow"
 
     def selectcontrolwindow(self):
-        self.controlwindow.hostlbl.text=self.dataman.selectedServerIP
-        self.controlwindow.ctrllbl.text=self.dataman.selectedCtrlID
+        self.controlwindow.hostlbl.text="Server: "+self.dataman.selectedServerIP
+        self.controlwindow.ctrllbl.text="Controller: "+self.dataman.selectedCtrlID
         self.screenmanager.current="controlwindow"

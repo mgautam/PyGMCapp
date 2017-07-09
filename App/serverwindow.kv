@@ -17,11 +17,15 @@
         size_hint:None,None
         size:300,30
         pos:root.width/2+15,root.height-self.height-15 
+        text_size: self.size
+        halign: 'left'
     Label:
         id: status_lbl
         size_hint:None,None
         size:root.width,30
         pos:0,root.height-self.height-60
+        text_size: self.size
+        halign: 'left'
     StackLayout:
         size_hint:None,None
         size:root.width,root.height-100
