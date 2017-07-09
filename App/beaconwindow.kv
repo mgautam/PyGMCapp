@@ -1,6 +1,6 @@
 <hostBtn@Button>:
     size_hint:None,None
-    size:300,30
+    size:1920/3,1080/15
 
 <beaconWindow@FloatLayout>:
     radarbtn:ping_btn
@@ -10,17 +10,17 @@
     Button:
         id: ping_btn
         size_hint:None,None
-        size:300,30
+        size:root.width/3,root.height/15
         pos:root.width/2-self.width-15,root.height-self.height-15
         text:"Find Hosts"
     TextInput:
         id:_passwdInput
         size_hint:None,None
-        size:300,30
+        size:root.width/3,root.height/15
         pos:root.width/2+15,root.height-self.height-15
     StackLayout:
         size_hint:None,None
-        size:root.width,root.height-60
+        size:root.width,root.height*14/15-30
         orientation: "tb-lr"
         id: ping_bl
         spacing: 15

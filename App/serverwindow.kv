@@ -1,6 +1,6 @@
 <ctrlBtn@Button>:
     size_hint:None,None
-    size:300,30
+    size:1920/3,1080/15
 <serverWindow@FloatLayout>:
     findbtn:find_btn
     hostlbl:host_lbl
@@ -9,26 +9,26 @@
     Button:
         id: find_btn
         size_hint:None,None
-        size:300,30
+        size:root.width/3,root.height/15
         pos:root.width/2-self.width-15,root.height-self.height-15 
         text:"Find Controllers"
     Label:
         id: host_lbl
         size_hint:None,None
-        size:300,30
+        size:root.width/3,root.height/15
         pos:root.width/2+15,root.height-self.height-15 
         text_size: self.size
         halign: 'left'
     Label:
         id: status_lbl
         size_hint:None,None
-        size:root.width,30
-        pos:0,root.height-self.height-60
+        size:root.width,root.height/15
+        pos:0,root.height-self.height*2-30
         text_size: self.size
         halign: 'left'
     StackLayout:
         size_hint:None,None
-        size:root.width,root.height-100
+        size:root.width,root.height*13/15-30
         orientation: "tb-lr"
         id: ping_bl
         spacing: 15

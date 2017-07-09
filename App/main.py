@@ -17,6 +17,6 @@ class PyPSIApp(App):
         return self.uimanager.buildwindows()
 
 if __name__ == '__main__':
-    Config.set('graphics', 'width',  960)
-    Config.set('graphics', 'height', 540)
+    Config.set('graphics', 'width',  1920)
+    Config.set('graphics', 'height', 1080)
     PyPSIApp().run()

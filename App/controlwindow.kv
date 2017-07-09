@@ -7,36 +7,36 @@
     Label:
         id: host_lbl
         size_hint:None,None
-        size:150,30
+        size:root.width/6,root.height/15
         pos:root.width/2-self.width-15,root.height-self.height-15
         text_size:self.size
         halign: 'right'
     Label:
         id: ctrl_lbl
         size_hint:None,None
-        size:150,30
+        size:root.width/6,root.height/15
         pos:root.width/2+15,root.height-self.height-15
         text_size:self.size
         halign: 'left'
     RelativeLayout:
         id: ctrl_area
         size_hint:None,None
-        size:root.width,root.height-120
-        pos:0,60 
+        size:root.width,root.height*12/15-30
+        pos:0,root.height*2/15 
         Button:
             text:'hello'
     Label:
         id: cmd_lbl
         size_hint:None,None
-        size:root.width,30
-        pos:0,30
+        size:root.width,root.height/15
+        pos:0,root.height/15
         halign: 'left'
         text_size: self.size
         text:"Last Command: " 
     Label:
         id: status_lbl
         size_hint:None,None
-        size:root.width,30
+        size:root.width,root.height/15
         pos:0,0
         halign: 'left'
         text_size: self.size
