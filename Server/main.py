@@ -44,7 +44,11 @@ class dataTransformer():
         self.server=_server
 
     def decode(self, data):
-        request=json.loads(data)
+        try:
+            request=json.loads(data)
+        except ValueError, err:
+            print("DataTranformer failure: Invalid data format.")
+            return
         if request['cmd']=='list_controllers':
             self.list_controllers()
 

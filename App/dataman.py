@@ -66,8 +66,12 @@ class dataTransformer():
         self.datahighway.protocol.sendData(cmd)
 
     def decode(self, msg):
-        response=json.loads(msg)
-        #self.dataman.updateStatus(response['cmd'])
+        try:
+            response=json.loads(msg)
+            #self.dataman.updateStatus(response['cmd'])
+        except ValueError, err:
+            self.dataman.updateStatus("DataTransformer failure: Invalid data format.")
+            return
         if response['cmd']=='controllers_list':
             for ctrl in response['ids']:
                 self.dataman.addController(ctrl)
