@@ -2,17 +2,9 @@ from kivy.uix.button import Button
 from kivy.uix.floatlayout import FloatLayout
 
 from kivy.lang import Builder
-Builder.load_file("serverwindow.kv")
-class ctrlBtn(Button):
-    window=None
-    def on_touch_down(self, touch):
-        if self.collide_point(touch.x, touch.y):
-            self.window.dataman.selectController(self.text)
-            self.window.uiman.selectcontrolwindow()
-            return True
-        return super(ctrlBtn, self).on_touch_down(touch)
+Builder.load_file("controlwindow.kv")
 
-class serverWindow(FloatLayout):
+class controlWindow(FloatLayout):
     dataman=None
     uiman=None
 

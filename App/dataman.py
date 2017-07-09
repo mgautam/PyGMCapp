@@ -11,14 +11,12 @@ class DataManager():
     uiman=None
 
     firstUDPCall=True
-    firstTCPCall=True
 
     def __init__(self, _uiman):
         self.uiman=_uiman
-        self.datahighway=dataHighwayFactory(self)
         self.radarbeacon=RadarScanner(self)
+        self.datahighway=dataHighwayFactory(self)
         #self.firstUDPCall=True
-        #self.firstTCPCall=True
 
     def findhosts(self, *args):
         if(self.firstUDPCall):
@@ -29,13 +27,20 @@ class DataManager():
     def addServer(self, host):
         self.uiman.beaconwindow.addServerBtn(host)
 
-    def setServer(self, btn, touch):
-        self.selectedServerIP=btn.text
+    def selectServer(self, _serverip):
+        self.selectedServerIP=_serverip
+        if(self.datahighway.protocol.transport):
+            self.datahighway.protocol.transport.loseConnection()
+        reactor.connectTCP(self.selectedServerIP,9999,self.datahighway)
 
     def findctrls(self, *args):
-        if(self.firstTCPCall):
-            reactor.connectTCP(self.selectedServerIP,9999,self.datahighway)
-            self.firstTCPCall=False
+        self.datahighway.protocol.sendData("hello")
 
     def updateStatus(self, msg):
         self.uiman.serverwindow.statuslbl.text=msg
+
+    def addController(self, ctrlr):
+        self.uiman.serverwindow.addCntrllrBtn(ctrlr)
+
+    def selectController(self, _ctrlid):
+        self.selectedCtrlID=_ctrlid

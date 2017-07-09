@@ -1,0 +1,39 @@
+<controlWindow@FloatLayout>:
+    hostlbl:host_lbl
+    ctrllbl:ctrl_lbl
+    controlarea: ctrl_area
+    cmdlbl:cmd_lbl
+    statuslbl:status_lbl
+    Label:
+        id: host_lbl
+        size_hint:None,None
+        size:150,30
+        pos:root.width/2-self.width-15,root.height-self.height-15 
+    Label:
+        id: ctrl_lbl
+        size_hint:None,None
+        size:150,30
+        pos:root.width/2+15,root.height-self.height-15 
+    RelativeLayout:
+        id: ctrl_area
+        size_hint:None,None
+        size:root.width,root.height-120
+        pos:0,60 
+        Button:
+            text:'hello'
+    Label:
+        id: cmd_lbl
+        size_hint:None,None
+        size:root.width,30
+        pos:0,30
+        halign: 'left'
+        text_size: self.size
+        text:"Last Command: " 
+    Label:
+        id: status_lbl
+        size_hint:None,None
+        size:root.width,30
+        pos:0,0
+        halign: 'left'
+        text_size: self.size
+        text:"Status: "

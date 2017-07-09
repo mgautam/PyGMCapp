@@ -4,7 +4,13 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.lang import Builder
 Builder.load_file("beaconwindow.kv")
 class hostBtn(Button):
-    pass
+    window=None
+    def on_touch_down(self, touch):
+        if self.collide_point(touch.x, touch.y):
+            self.window.dataman.selectServer(self.text)
+            self.window.uiman.selectserverwindow()
+            return True
+        return super(hostBtn, self).on_touch_down(touch)
 
 class beaconWindow(FloatLayout):
     dataman=None
@@ -19,8 +25,5 @@ class beaconWindow(FloatLayout):
 
     def addServerBtn(self, host):
         btn=hostBtn(text=host)
-        btn.bind(on_touch_down=self.dataman.setServer)
-        btn.bind(on_press=self.uiman.nextscreen)
+        btn.window=self
         self.hostsContainer.add_widget(btn)
-
-

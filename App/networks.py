@@ -18,35 +18,44 @@ class RadarScanner(DatagramProtocol):
         if data[:4]=="PONG":
             self.dataman.addServer(host)
 
+
+
 from twisted.internet.protocol import ClientFactory,Protocol
 
 class dataHighway(Protocol):
-   def connectionMade(self):
-        data = 'Hello, Server!'
-        self.transport.write(data.encode())
-        self.factory.logmsg('Data sent {}'.format(data))
+    def connectionMade(self):
+        self.factory.logmsg('Connection Successful.')
 
-   def dataReceived(self, data):
-        self.factory.logmsg('Data received {}'.format(data))
+    def sendData(self,msg):
+        data = 'ABCDEF'
+        if (self.transport):
+            self.transport.write(data.encode())
+            self.factory.logmsg('Data sent {}'.format(data))
+        else:
+            self.factory.logmsg('No Connection Established yet!')
 
-   def connectionLost(self, reason):
+    def dataReceived(self, data):
+        if data[:1]=='A':
+            self.factory.dataman.addController(data)
+
+    def connectionLost(self, reason):
         self.factory.logmsg('Lost connection because {}'.format(reason))
-
 
 class dataHighwayFactory(ClientFactory):
     dataman=None
+    protocol=None
 
     def __init__(self, _dataman):
         self.dataman=_dataman
-
+        self.protocol=dataHighway()
+        self.protocol.factory=self
+ 
     def startedConnecting(self, connector):
          self.logmsg('Started to connect.')
 
     def buildProtocol(self, addr):
          self.logmsg('Connected.')
-         proto=dataHighway()
-         proto.factory=self
-         return proto
+         return self.protocol
 
     def clientConnectionLost(self, connector, reason):
          self.logmsg('Lost connection. Reason: {}'.format(reason))

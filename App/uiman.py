@@ -4,6 +4,7 @@ from kivy.uix.screenmanager import ScreenManager
 
 from beaconwindow import beaconWindow
 from serverwindow import serverWindow
+from controlwindow import controlWindow
 
 from kivy.lang import Builder
 Builder.load_file("scrman.kv")
@@ -16,7 +17,7 @@ class UIManager():
 
     beaconwindow=None
     serverwindow=None
-    contrlwindow=None
+    controlwindow=None
 
     screenmanager=None
 
@@ -34,12 +35,22 @@ class UIManager():
         self.serverwindow.uiman=self
         self.serverwindow.findbtn.bind(on_press=self.dataman.findctrls)
 
+        self.controlwindow = controlWindow()
+        self.controlwindow.dataman=self.dataman
+        self.controlwindow.uiman=self
+
         self.screenmanager = ScreenMan()
         self.screenmanager.dataman=self.dataman
         self.screenmanager.get_screen("beaconwindow").add_widget(self.beaconwindow)
         self.screenmanager.get_screen("serverwindow").add_widget(self.serverwindow)
+        self.screenmanager.get_screen("controlwindow").add_widget(self.controlwindow)
         return self.screenmanager
 
-    def nextscreen(self, *args):
+    def selectserverwindow(self):
         self.serverwindow.hostlbl.text=self.dataman.selectedServerIP
         self.screenmanager.current="serverwindow"
+
+    def selectcontrolwindow(self):
+        self.controlwindow.hostlbl.text=self.dataman.selectedServerIP
+        self.controlwindow.ctrllbl.text=self.dataman.selectedCtrlID
+        self.screenmanager.current="controlwindow"
