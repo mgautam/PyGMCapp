@@ -53,6 +53,18 @@ class DataManager():
         self.selectedCtrlID=_ctrlid
         reactor.callLater(1, self.datatrans.requeststs)
 
+    def updateGCStatus(self, stsarraymsg):
+        try:
+            stsarray=json.loads(stsarraymsg)
+        except ValueError, err:
+            self.dataman.updateStatus("DataTransformer failure: Invalid data format.")
+            return
+        self.uiman.controlwindow.rpa.text=str(stsarray[0])#RPA
+        self.uiman.controlwindow.tpa.text=str(stsarray[1])#TPA
+        self.uiman.controlwindow.tva.text=str(stsarray[2])#TVA
+        self.uiman.controlwindow.tda.text=str(stsarray[3])#TDA
+        self.uiman.controlwindow.moa.text=str(stsarray[4])#MOA
+
     def motioncmd(self, msg):
         self.datatrans.motioncmd(msg)
 
@@ -92,4 +104,4 @@ class dataTransformer():
             for ctrl in response['ids']:
                 self.dataman.addController(ctrl)
         elif response['cmd']=='status_send':
-            self.dataman.updateStatus(response['status'])
+            self.dataman.updateGCStatus(response['status'])

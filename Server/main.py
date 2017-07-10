@@ -77,9 +77,9 @@ class dataTransformer():
             cmdbuf.close()
         with open(self.rdpipe,"r") as responsebuf:
             while True:
-                data=responsebuf.read()
+                data=responsebuf.readline().strip()
                 if len(data)!=0:
-                    msg=json.dumps({'cmd':'status_send','ctrlid':ctrlid,'status':data[:-3]})
+                    msg=json.dumps({'cmd':'status_send','ctrlid':ctrlid,'status':data})
                     self.server.sendData(msg)
                 else:
                     break
