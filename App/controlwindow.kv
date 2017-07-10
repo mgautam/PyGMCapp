@@ -1,9 +1,17 @@
+<StsLabel@Button>:
+    #size_hint:None,None
+    #size:root.width/5,root.height/15
+    text_size:self.size
+    halign:'center'
+    valign:'middle'
 <controlWindow@FloatLayout>:
     hostlbl:host_lbl
     ctrllbl:ctrl_lbl
     controlarea: ctrl_area
     cmdlbl:cmd_lbl
     statuslbl:status_lbl
+    fwdbtn:_fwdBtn
+    bwdbtn:_bwdBtn
     Label:
         id: host_lbl
         size_hint:None,None
@@ -23,8 +31,45 @@
         size_hint:None,None
         size:root.width,root.height*12/15-30
         pos:0,root.height*2/15 
-        Button:
-            text:'hello'
+        GridLayout:
+            cols:2
+            rows:5
+            size_hint:None,None
+            size:root.width/3,root.height*12/15-30
+            StsLabel:
+                text:"TPA"
+            StsLabel:
+                id:_TPA
+            StsLabel:
+                text:"RPA"
+            StsLabel:
+                id:_RPA
+            StsLabel:
+                text:"MOA"
+            StsLabel:
+                id:_MOA
+            StsLabel:
+                text:"TVA"
+            StsLabel:
+                id:_TVA
+            StsLabel:
+                text:"TDA"
+            StsLabel:
+                id:_TDA
+            #pos_hint:0,0
+        GridLayout:
+            rows:2
+            size_hint:None,None
+            size:root.width/3,root.height*2/15
+            pos:root.width*1/2,root.height/2-self.height/2
+            Button:
+                id:_fwdBtn
+                text:'Forward'
+                on_press:root.moveforward(*args)
+            Button:
+                id:_bwdBtn
+                text:'Backward'
+                on_press:root.movereverse(*args)
     Label:
         id: cmd_lbl
         size_hint:None,None

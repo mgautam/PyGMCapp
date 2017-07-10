@@ -52,6 +52,11 @@ class DataManager():
     def selectController(self, _ctrlid):
         self.selectedCtrlID=_ctrlid
 
+    def motioncmd(self, msg):
+        self.datatrans.motioncmd(msg)
+
+    def updateLastCMD(self, cmd):
+        self.uiman.controlwindow.cmdlbl.text="Last Command: " + cmd
 
 class dataTransformer():
     datahighway=None
@@ -63,6 +68,15 @@ class dataTransformer():
 
     def findctrls(self):
         cmd=json.dumps({'cmd':'list_controllers'})
+        self.datahighway.protocol.sendData(cmd)
+
+    def requeststs(self):
+        cmd=json.dumps({'cmd':'send_status','ctrlid':self.dataman.selectedCtrlID})
+        self.datahighway.protocol.sendData(cmd)
+
+
+    def motioncmd(self, msg):
+        cmd=json.dumps({'cmd':'motion_cmd','ctrlid':self.dataman.selectedCtrlID,'gclib':msg})
         self.datahighway.protocol.sendData(cmd)
 
     def decode(self, msg):

@@ -12,10 +12,11 @@ class controlWindow(FloatLayout):
     #    self.dataman=_dataman
     #    self.uiman=_uiman
 
-    def clearCtrllrsList(self):
-        self.ctrlsContainer.clear_widgets()
+    def moveforward(self,*args):
+        self.dataman.updateLastCMD("move forward")
+        self.dataman.motioncmd("forward")
 
-    def addCntrllrBtn(self, ctrlr):
-        btn=ctrlBtn(text=ctrlr)
-        btn.window=self
-        self.ctrlsContainer.add_widget(btn)
+    def movereverse(self,*args):
+        self.dataman.updateLastCMD("move reverse")
+        self.dataman.motioncmd("reverse")
+
