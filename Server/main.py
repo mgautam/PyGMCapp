@@ -64,10 +64,26 @@ class dataTransformer():
             self.list_controllers()
         elif request['cmd']=='motion_cmd':
             self.motion_command(request['ctrlid'],request['gccmd'])
+        elif request['cmd']=='send_status':
+            self.send_status(request['ctrlid'])
 
     def list_controllers(self):
         msg=json.dumps({'cmd':'controllers_list','ids':['ABCDEF','GHIJKL']})
         self.server.sendData(msg)
+
+    def send_status(self, ctrlid):
+        with open(self.wrpipe,"w") as cmdbuf:
+            cmdbuf.write("send_status")
+            cmdbuf.close()
+        with open(self.rdpipe,"r") as responsebuf:
+            while True:
+                data=responsebuf.read()
+                if len(data)!=0:
+                    msg=json.dumps({'cmd':'status_send','ctrlid':ctrlid,'status':data[:-3]})
+                    self.server.sendData(msg)
+                else:
+                    break
+            responsebuf.close()
 
     def motion_command(self, ctrlid, cmd):
         with open(self.wrpipe,"w") as cmdbuf:

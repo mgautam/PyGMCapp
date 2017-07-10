@@ -56,13 +56,21 @@ int main(int argc, char **argv) {
         //strcpy(rcvbuf,"409600");
         //bytes_read=6;
         if( bytes_read > 0 ) {
-            strcpy (cmdbuf,"var=");
-            strcat (cmdbuf, rcvbuf);
-            cmdsts=check(GCmd(g, cmdbuf));		//Send to Galil Controller
-            printf("%s\n", cmdbuf);
-            //send response messages
-            //pipeout = open("/tmp/cppipe",O_WRONLY);
-            //close(pipeout);
+            if(strcmp(rcvbuf,"send_status")==0) {
+                strcpy(cmdbuf,"MG_TPA");
+                check(GCommand(g, cmdbuf, responsebuf, sizeof(responsebuf), &bytes_read));
+                printf("response: %s\n", responsebuf); //Print the response
+
+                //send response messages
+                pipeout = open("/tmp/cppipe",O_WRONLY);
+                write(pipeout, responsebuf, bytes_read);
+                close(pipeout);
+            } else {
+                strcpy (cmdbuf,"var=");
+                strcat (cmdbuf, rcvbuf);
+                cmdsts=check(GCmd(g, cmdbuf));		//Send to Galil Controller
+            }
+                printf("%s\n", cmdbuf);
         }
         usleep(300000);
     }while(cmdsts);

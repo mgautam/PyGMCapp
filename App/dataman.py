@@ -51,6 +51,7 @@ class DataManager():
 
     def selectController(self, _ctrlid):
         self.selectedCtrlID=_ctrlid
+        reactor.callLater(1, self.datatrans.requeststs)
 
     def motioncmd(self, msg):
         self.datatrans.motioncmd(msg)
@@ -73,6 +74,7 @@ class dataTransformer():
     def requeststs(self):
         cmd=json.dumps({'cmd':'send_status','ctrlid':self.dataman.selectedCtrlID})
         self.datahighway.protocol.sendData(cmd)
+        reactor.callLater(1, self.requeststs)
 
 
     def motioncmd(self, msg):
@@ -89,4 +91,5 @@ class dataTransformer():
         if response['cmd']=='controllers_list':
             for ctrl in response['ids']:
                 self.dataman.addController(ctrl)
-
+        elif response['cmd']=='status_send':
+            self.dataman.updateStatus(response['status'])
