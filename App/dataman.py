@@ -76,7 +76,7 @@ class dataTransformer():
 
 
     def motioncmd(self, msg):
-        cmd=json.dumps({'cmd':'motion_cmd','ctrlid':self.dataman.selectedCtrlID,'gclib':msg})
+        cmd=json.dumps({'cmd':'motion_cmd','ctrlid':self.dataman.selectedCtrlID,'gccmd':msg})
         self.datahighway.protocol.sendData(cmd)
 
     def decode(self, msg):

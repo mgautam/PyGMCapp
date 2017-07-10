@@ -38,10 +38,21 @@ class ServerFactory(ServerFactory):
     def buildProtocol(self, addr):
         return ServerProtocol()
 
+import os, errno
 class dataTransformer():
     server=None
+    rdpipe='/tmp/cppipe'
+    wrpipe='/tmp/pcpipe'
+
     def __init__(self, _server):
         self.server=_server
+        try:
+            os.mkfifo(self.rdpipe)
+            os.mkfifo(self.wrpipe)
+        except OSError as oe:
+            if oe.errno != errno.EEXIST:
+                print('cannot initialize named pipe')
+                raise
 
     def decode(self, data):
         try:
@@ -51,10 +62,17 @@ class dataTransformer():
             return
         if request['cmd']=='list_controllers':
             self.list_controllers()
+        elif request['cmd']=='motion_cmd':
+            self.motion_command(request['ctrlid'],request['gccmd'])
 
     def list_controllers(self):
         msg=json.dumps({'cmd':'controllers_list','ids':['ABCDEF','GHIJKL']})
         self.server.sendData(msg)
+
+    def motion_command(self, ctrlid, cmd):
+        with open(self.wrpipe,"w") as cmdbuf:
+            cmdbuf.write(cmd)
+            cmdbuf.close()
 
 if __name__=='__main__':
     reactor.listenUDP(9999,PongProtocol())
