@@ -1,6 +1,8 @@
 from twisted.internet.protocol import DatagramProtocol
 from twisted.internet import reactor
 import json
+import time
+import threading
 
 class PongProtocol(DatagramProtocol):
     def datagramReceived(self, datagram, (host, port)):
@@ -19,12 +21,12 @@ class ServerProtocol(Protocol):
     def sendData(self, msg):
         if (self.transport):
              self.transport.write(msg)
-             print('Data sent {}'.format(msg))
+             print('{}: Data sent {}'.format(time.time(), msg))
         else:
              print('No Connection Established yet!')
 
     def dataReceived(self, data):
-        print('Data received {}'.format(data))
+        print('{}: Data received {}'.format(time.time(), data))
         self.datatrans.decode(data)
 
     def connectionMade(self):
@@ -65,16 +67,21 @@ class dataTransformer():
         elif request['cmd']=='motion_cmd':
             self.motion_command(request['ctrlid'],request['gccmd'])
         elif request['cmd']=='send_status':
-            self.send_status(request['ctrlid'])
+            self.requestgc_status(request['ctrlid'])
+            readThread=threading.Thread(target=self.send_status_toApp,args=(request['ctrlid'],))
+            readThread.daemon=True
+            readThread.start()
 
     def list_controllers(self):
         msg=json.dumps({'cmd':'controllers_list','ids':['ABCDEF','GHIJKL']})
         self.server.sendData(msg)
 
-    def send_status(self, ctrlid):
+    def requestgc_status(self, ctrlid):
         with open(self.wrpipe,"w") as cmdbuf:
             cmdbuf.write("send_status")
             cmdbuf.close()
+
+    def send_status_toApp(self, ctrlid):
         with open(self.rdpipe,"r") as responsebuf:
             while True:
                 data=responsebuf.readline().strip()
@@ -83,7 +90,6 @@ class dataTransformer():
                     self.server.sendData(msg)
                 else:
                     break
-            responsebuf.close()
 
     def motion_command(self, ctrlid, cmd):
         with open(self.wrpipe,"w") as cmdbuf:
