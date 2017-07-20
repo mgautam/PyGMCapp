@@ -74,33 +74,31 @@ class dataTransformer():
             logging.warning("DataTranformer failure: Invalid data format.")
             return
         operation=request.get('cmd')
+        op_list=['list_controllers','send_status','motion_cmd']
+        if not (operation in op_list):
+            self.logging.error('operation does not exist: %r',operation)
+            return
         try:
             target = getattr(self,operation)
         except (AttributeError, TypeError):
-            self.logging.error('operation does not exist: %r',operation)
+            self.logging.error('operation is not defined: %r',operation)
             return
-        if 'ctrlid' in request:
-            params=[request['ctrlid']]
-        else:
-            params=None
-        if 'gccmd' in request:
-            params.append(request['gccmd'])
+        ctrlid=request.get('ctrlid')
+        params=request.get('params')
+        target(ctrlid,params)
 
-        if params==None:
-            funcwrap(target)
-        else:
-            funcwrap(target,params)
-
-    def list_controllers(self):
+    def list_controllers(self, ctrlid, params):
         msg=json.dumps({'cmd':'controllers_list','ids':['ABCDEF','GHIJKL']})
         self.server.sendData(msg)
 
-    def request_galil_status(self, ctrlid):
+    def request_galil_status(self, ctrlid, params):
+        datalist=[ctrlid,'send_status']
+        datalist.extend(params)
         with open(self.wrpipe,"w") as cmdbuf:
-            cmdbuf.write("send_status")
+            cmdbuf.write(json.dumps(datalist))
             cmdbuf.close()
 
-    def forward_galil_status(self, ctrlid):
+    def forward_galil_status(self, ctrlid, params):
         with open(self.rdpipe,"r") as responsebuf:
             while True:
                 data=responsebuf.readline().strip()
@@ -110,15 +108,17 @@ class dataTransformer():
                 else:
                     break
 
-    def send_status(self, ctrlid):
-        readThread=threading.Thread(target=self.forward_galil_status,args=(ctrlid,))
+    def send_status(self, ctrlid, params):
+        readThread=threading.Thread(target=self.forward_galil_status,args=(ctrlid, params,))
         readThread.daemon=True
         readThread.start()
-        self.request_galil_status(ctrlid)
+        self.request_galil_status(ctrlid, params)
 
-    def motion_cmd(self, (ctrlid, cmd)):
+    def motion_cmd(self, ctrlid, params):
+        datalist=[ctrlid,'motion_cmd']
+        datalist.append(params)
         with open(self.wrpipe,"w") as cmdbuf:
-            cmdbuf.write(cmd)
+            cmdbuf.write(json.dumps(datalist))
             cmdbuf.close()
 
 if __name__=='__main__':

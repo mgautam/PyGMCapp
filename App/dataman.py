@@ -80,17 +80,18 @@ class dataTransformer():
         self.dataman=_dataman
 
     def findctrls(self):
-        cmd=json.dumps({'cmd':'list_controllers'})
+        cmd=json.dumps({'cmd':'list_controllers','ctrlid':None,'params':None})
         self.datahighway.protocol.sendData(cmd)
 
     def requeststs(self):
-        cmd=json.dumps({'cmd':'send_status','ctrlid':self.dataman.selectedCtrlID})
+        params=['_TPA','_RPA','_MOA','_TVA','_TDA']
+        cmd=json.dumps({'cmd':'send_status','ctrlid':self.dataman.selectedCtrlID,'params':params})
         self.datahighway.protocol.sendData(cmd)
         reactor.callLater(1, self.requeststs)
 
 
     def motioncmd(self, msg):
-        cmd=json.dumps({'cmd':'motion_cmd','ctrlid':self.dataman.selectedCtrlID,'gccmd':msg})
+        cmd=json.dumps({'cmd':'motion_cmd','ctrlid':self.dataman.selectedCtrlID,'params':msg})
         self.datahighway.protocol.sendData(cmd)
 
     def decode(self, msg):

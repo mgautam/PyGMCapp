@@ -35,6 +35,53 @@ struct jobs_queue {
 };
 jobs_queue *head, *tail;
 
+
+char ctrlid[10]={0};
+char command[15]={0};
+char params[10][10]={0};
+int numparams=0;
+
+void parseJSON(char *rcvbuf) {
+      memset(ctrlid,0,10);
+     memset(command,0,15);
+     memset(params,0,10*10);
+     numparams=0;
+
+     int i;
+     int startIndex=-1,length=-1,endIndex=-1;
+     for (i=0; i < 100; i++)
+         if(rcvbuf[i]=='[')
+             startIndex=i+1;
+         else if (rcvbuf[i]==']'){
+             length=i-startIndex;
+             endIndex=i-1;
+         }
+     //printf("start:%d,length:%d,end:%d\n",startIndex,length,endIndex);
+     int paramIndex=0,quoteStartIndex=-1;
+     bool quoteStart=false;
+     if ((startIndex!=-1) && (length!=-1))
+         for (i=startIndex; i < endIndex; i++)
+             if(quoteStart) {
+                 if (rcvbuf[i]=='"') {
+                   quoteStart=false;
+                   paramIndex++;
+                 }
+                 else {
+                    if(paramIndex==0)
+                     ctrlid[i-quoteStartIndex]=rcvbuf[i];
+                   else if(paramIndex==1)
+                     command[i-quoteStartIndex]=rcvbuf[i];
+                   else
+                     params[paramIndex-2][i-quoteStartIndex]=rcvbuf[i];
+                 }
+             }
+             else if(rcvbuf[i]=='"') {
+                 quoteStartIndex=i+1;
+                 quoteStart=true;
+             }
+     numparams=paramIndex-1;
+}
+
 void *worker_thread_func(void* null) {
     int pipeout;
     char rcvbuf[96]={0};
@@ -60,8 +107,14 @@ void *worker_thread_func(void* null) {
             head=temp_pointer;
             //pthread_mutex_unlock(&jobs_queue_mutex);
             printf("work_recvd: id:%d, %s\n",jobid,rcvbuf);
+            parseJSON(rcvbuf);
+            /*printf("ctrl:%s, cmd:%s, params: ",ctrlid, command);
+             int i=0;
+             for (i=0; i<numparams; i++)
+               printf("%s, ",params[i]);
+             printf("\n");*/
 
-            if(strcmp(rcvbuf,"send_status")==0) {
+            if(strcmp(command,"send_status")==0) {
                  int index=0;
                  int bytes_read=0;
                  responsebuf[0]='[';
@@ -99,9 +152,9 @@ void *worker_thread_func(void* null) {
                 pipeout = open("/tmp/cppipe",O_WRONLY);
                 write(pipeout, responsebuf, strlen(responsebuf));
                 close(pipeout);
-            } else {
+            } else if(strcmp(command,"motion_cmd")==0) {
                 strcpy (cmdbuf,"var=");
-                strcat (cmdbuf, rcvbuf);
+                strcat (cmdbuf, params[0]);
                 cmdsts=check(GCmd(g, cmdbuf));    //Send to 
                 printf("work_excd: id:%d, cmd:%s\n", jobid, cmdbuf);
           }
