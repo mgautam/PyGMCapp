@@ -84,7 +84,7 @@ class dataTransformer():
         self.datahighway.protocol.sendData(cmd)
 
     def requeststs(self):
-        params=['_TPA','_RPA','_MOA','_TVA','_TDA']
+        params=['_RPA','_TPA','_TVA','_TDA','_MOA']
         cmd=json.dumps({'cmd':'send_status','ctrlid':self.dataman.selectedCtrlID,'params':params})
         self.datahighway.protocol.sendData(cmd)
         reactor.callLater(1, self.requeststs)
