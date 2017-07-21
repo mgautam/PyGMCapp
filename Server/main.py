@@ -122,7 +122,7 @@ class dataTransformer():
             cmdbuf.close()
 
 if __name__=='__main__':
-    logging.basicConfig(filename='psi_gateway.log',level=logging.DEBUG)
+    logging.basicConfig(filename='/tmp/psi_gateway.log',level=logging.DEBUG)
     reactor.listenUDP(9999,PongProtocol())
     reactor.listenTCP(9999, ServerFactory())
     reactor.run()

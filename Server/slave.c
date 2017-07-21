@@ -115,16 +115,20 @@ void *worker_thread_func(void* null) {
              printf("\n");*/
 
             if(strcmp(command,"send_status")==0) {
-                 int index=0;
+                 int i,index=0;
                  int bytes_read=0;
                  responsebuf[0]='[';
-                 index++;
-                 strcpy(cmdbuf,"MG_RPA");
-                 check(GCommand(g, cmdbuf, responsebuf+index, sizeof(responsebuf)-index, &bytes_read));
-                 index+=bytes_read-3;
-                 responsebuf[index]=',';
-                 index++;
-                 strcpy(cmdbuf,"MG_TPA");
+                 //index++;
+                 for (i=0; i<numparams; i++) {
+                     index++;
+                     strcpy(cmdbuf,"MG");
+                     strcat(cmdbuf,params[i]);
+                     check(GCommand(g, cmdbuf, responsebuf+index, sizeof(responsebuf)-index, &bytes_read));
+                     index+=bytes_read-3;
+                     responsebuf[index]=',';
+                     //index++;
+                 }
+                 /*strcpy(cmdbuf,"MG_TPA");
                  check(GCommand(g, cmdbuf, responsebuf+index, sizeof(responsebuf)-index, &bytes_read));
                  index+=bytes_read-3;
                  responsebuf[index]=',';
@@ -141,12 +145,12 @@ void *worker_thread_func(void* null) {
                  index++;
                  strcpy(cmdbuf,"MG_MOA");
                  check(GCommand(g, cmdbuf, responsebuf+index,sizeof(responsebuf)-index, &bytes_read));
-                 index+=bytes_read-3;
+                 index+=bytes_read-3;*/
                  responsebuf[index]=']';
                  index++;
                  responsebuf[index]='\0';
 
-                printf("work_excd: id:%d, response: %s\n", jobid, responsebuf); //Print the response
+                printf("work_excd: id:%d,%d response: %s\n", jobid,strlen(responsebuf), responsebuf); //Print the response
 
                 //send response messages
                 pipeout = open("/tmp/cppipe",O_WRONLY);
