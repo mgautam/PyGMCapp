@@ -104,14 +104,14 @@ void *worker_thread_func(void* null) {
                 printf("\twork_excd: id:%d, response: %s\n", jobid, responsebuf); //Print the response
 
                 //send response messages
-                pipeout = open("/tmp/cppipe",O_WRONLY);
+                pipeout = open("/tmp/GMCcppipe",O_WRONLY);
                 write(pipeout, responsebuf, strlen(responsebuf));
                 close(pipeout);
             }
             else if(strcmp(command,"motion_cmd")==0) {
                 strcpy (cmdbuf,"var=");
-                strcat (cmdbuf, params[0]);
-                if(strcmp(params[0],"-409600")==0) cmdpos=-4096;
+                strcat (cmdbuf, params[1]);
+                if(strcmp(params[1],"-409600")==0) cmdpos=-4096;
                 else cmdpos=4096;
                 usleep(100000);//Send command to controller
                 printf("\twork_excd: id:%d, cmd:%s\n", jobid, cmdbuf);
@@ -140,7 +140,7 @@ int main(int argc, char **argv) {
 
     while (true) {
         // read data from the gateway server
-        pipein = open("/tmp/pcpipe",O_RDONLY);
+        pipein = open("/tmp/GMCpcpipe",O_RDONLY);
         bytes_read = read(pipein, rcvbuf, sizeof(rcvbuf));
         close(pipein);
         if( bytes_read > 0 ) {

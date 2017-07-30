@@ -54,19 +54,11 @@ class DataManager():
         reactor.callLater(1, self.datatrans.requeststs)
 
     def updateGCStatus(self, stsarraymsg):
-        try:
-            stsarray=json.loads(stsarraymsg)
-        except ValueError, err:
-            self.dataman.updateStatus("DataTransformer failure: Invalid data format.")
-            return
-        self.uiman.controlwindow.rpa.text=str(stsarray[0])#RPA
-        self.uiman.controlwindow.tpa.text=str(stsarray[1])#TPA
-        self.uiman.controlwindow.tva.text=str(stsarray[2])#TVA
-        self.uiman.controlwindow.tda.text=str(stsarray[3])#TDA
-        self.uiman.controlwindow.moa.text=str(stsarray[4])#MOA
+        self.uiman.controlwindow.updateGCStatus(stsarraymsg)
 
     def motioncmd(self, msg):
         self.datatrans.motioncmd(msg)
+        self.updateLastCMD(msg)
 
     def updateLastCMD(self, cmd):
         self.uiman.controlwindow.cmdlbl.text="Last Command: " + cmd

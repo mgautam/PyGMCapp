@@ -5,12 +5,9 @@ from kivy.lang import Builder
 Builder.load_file("beaconwindow.kv")
 class hostBtn(Button):
     window=None
-    def on_touch_down(self, touch):
-        if self.collide_point(touch.x, touch.y):
-            self.window.dataman.selectServer(self.text)
-            self.window.uiman.selectserverwindow()
-            return True
-        return super(hostBtn, self).on_touch_down(touch)
+    def selectServer(self, ipaddr):
+        self.window.dataman.selectServer(ipaddr)
+        self.window.uiman.selectserverwindow()
 
 class beaconWindow(FloatLayout):
     dataman=None

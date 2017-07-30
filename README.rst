@@ -1,4 +1,4 @@
-PyPSIapp
+PyGMCapp
 --------
 
 Controlling Galil motion controllers remotely.

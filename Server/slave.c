@@ -153,12 +153,12 @@ void *worker_thread_func(void* null) {
                 printf("work_excd: id:%d,%d response: %s\n", jobid,strlen(responsebuf), responsebuf); //Print the response
 
                 //send response messages
-                pipeout = open("/tmp/cppipe",O_WRONLY);
+                pipeout = open("/tmp/GMCcppipe",O_WRONLY);
                 write(pipeout, responsebuf, strlen(responsebuf));
                 close(pipeout);
             } else if(strcmp(command,"motion_cmd")==0) {
                 strcpy (cmdbuf,"var=");
-                strcat (cmdbuf, params[0]);
+                strcat (cmdbuf, params[1]);
                 cmdsts=check(GCmd(g, cmdbuf));    //Send to 
                 printf("work_excd: id:%d, cmd:%s\n", jobid, cmdbuf);
           }
@@ -201,7 +201,7 @@ int main(int argc, char **argv) {
 
     while (true) {
         // read data from the gateway server
-        pipein = open("/tmp/pcpipe",O_RDONLY);
+        pipein = open("/tmp/GMCpcpipe",O_RDONLY);
         bytes_read = read(pipein, rcvbuf, sizeof(rcvbuf));
         close(pipein);
         if( bytes_read > 0 ) {

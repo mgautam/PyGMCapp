@@ -4,14 +4,15 @@ import json
 import time
 import threading
 import logging
+import sys
 
 class PongProtocol(DatagramProtocol):
     def datagramReceived(self, datagram, (host, port)):
         if datagram[:4] == "PING":
-            logging.info("received %r from %s:%d, sending pong" % (datagram, host, port))
+            logger.info("received %r from %s:%d, sending pong" % (datagram, host, port))
             self.transport.write("PONG",(host, port))
         else:
-            logging.info("received %r from %s:%d" % (datagram, host, port))
+            logger.info("received %r from %s:%d" % (datagram, host, port))
 
 
 from twisted.internet.protocol import ServerFactory, Protocol
@@ -22,20 +23,20 @@ class ServerProtocol(Protocol):
     def sendData(self, msg):
         if (self.transport):
              self.transport.write(msg)
-             logging.info('{}: Data sent {}'.format(time.time(), msg))
+             logger.info('{}: Data sent {}'.format(time.time(), msg))
         else:
-             logging.warning('No Connection Established yet!')
+             logger.warning('No Connection Established yet!')
 
     def dataReceived(self, data):
-        logging.info('{}: Data received {}'.format(time.time(), data))
+        logger.info('{}: Data received {}'.format(time.time(), data))
         self.datatrans.decode(data)
 
     def connectionMade(self):
         self.datatrans=dataTransformer(self)
-        logging.debug('Client connection from {}'.format(self.transport.getPeer()))
+        logger.debug('Client connection from {}'.format(self.transport.getPeer()))
 
     def connectionLost(self, reason):
-        logging.info('Lost connection because {}'.format(reason))
+        logger.info('Lost connection because {}'.format(reason))
 
 class ServerFactory(ServerFactory):
     def buildProtocol(self, addr):
@@ -48,8 +49,8 @@ def funcwrap(func, *args):
 
 class dataTransformer():
     server=None
-    rdpipe='/tmp/cppipe'
-    wrpipe='/tmp/pcpipe'
+    rdpipe='/tmp/GMCcppipe'
+    wrpipe='/tmp/GMCpcpipe'
     handle=0
 
     def __init__(self, _server):
@@ -59,7 +60,7 @@ class dataTransformer():
             os.mkfifo(self.wrpipe)
         except OSError as oe:
             if oe.errno != errno.EEXIST:
-                logging.error('cannot initialize named pipe')
+                logger.error('cannot initialize named pipe')
                 raise
         self.handle=0
 
@@ -71,17 +72,17 @@ class dataTransformer():
         try:
             request=json.loads(data)
         except ValueError, err:
-            logging.warning("DataTranformer failure: Invalid data format.")
+            logger.warning("DataTranformer failure: Invalid data format.")
             return
         operation=request.get('cmd')
         op_list=['list_controllers','send_status','motion_cmd']
         if not (operation in op_list):
-            self.logging.error('operation does not exist: %r',operation)
+            self.logger.error('operation does not exist: %r',operation)
             return
         try:
             target = getattr(self,operation)
         except (AttributeError, TypeError):
-            self.logging.error('operation is not defined: %r',operation)
+            self.logger.error('operation is not defined: %r',operation)
             return
         ctrlid=request.get('ctrlid')
         params=request.get('params')
@@ -116,13 +117,25 @@ class dataTransformer():
 
     def motion_cmd(self, ctrlid, params):
         datalist=[ctrlid,'motion_cmd']
-        datalist.append(params)
+        try:
+            motion=json.loads(params)
+        except ValueError, err:
+            logger.warning("Motion failure: Invalid motion format.")
+            return
+        datalist.append(motion["type"])
+        datalist.append(motion['distance'])
         with open(self.wrpipe,"w") as cmdbuf:
             cmdbuf.write(json.dumps(datalist))
             cmdbuf.close()
 
 if __name__=='__main__':
-    logging.basicConfig(filename='/tmp/psi_gateway.log',level=logging.DEBUG)
+    logging.basicConfig(filename='/tmp/gmc_gateway.log',level=logging.DEBUG)
+    logger=logging.getLogger('gmc_logger')
+
+    std_hdlr=logging.StreamHandler(sys.stdout)
+    std_hdlr.setLevel(logging.DEBUG)
+    logger.addHandler(std_hdlr)
+
     reactor.listenUDP(9999,PongProtocol())
     reactor.listenTCP(9999, ServerFactory())
     reactor.run()

@@ -67,14 +67,14 @@
             size_hint:None,None
             size:root.width/3,root.height*2/5
             pos:root.width*1/2,root.height/2-self.height/2
-            Button:
+            AbsMoveBtn:
                 id:_fwdBtn
                 text:'Forward'
-                on_press:root.moveforward(*args)
-            Button:
+                on_press:self.move_absolute("409600")
+            AbsMoveBtn:
                 id:_bwdBtn
                 text:'Backward'
-                on_press:root.movereverse(*args)
+                on_press:self.move_absolute("-409600")
     Label:
         id: cmd_lbl
         size_hint:None,None
